@@ -102,65 +102,7 @@ def load_data_new(dataset_str, split,normfeat):
     # print('dataset_str', dataset_str)
     # print('split', split)
     if dataset_str in ['citeseer', 'cora', 'pubmed']:
-        names = ['x', 'y', 'tx', 'ty', 'allx', 'ally', 'graph']
-        objects = []
-        for i in range(len(names)):
-            with open("/home/zhangtaiyan/workspace/SADE-GCN/small-scale/data/ind.{}.{}".format(dataset_str, names[i]), 'rb') as f:
-                if sys.version_info > (3, 0):
-                    objects.append(pkl.load(f, encoding='latin1'))
-                else:
-                    objects.append(pkl.load(f))
-
-        x, y, tx, ty, allx, ally, graph = tuple(objects)
-        test_idx_reorder = parse_index_file(
-            "/home/zhangtaiyan/workspace/SADE-GCN/small-scale/data/ind.{}.test.index".format(dataset_str))
-        test_idx_range = np.sort(test_idx_reorder)
-        if dataset_str == 'citeseer':
-            # Fix citeseer dataset (there are some isolated nodes in the graph)
-            # Find isolated nodes, add them as zero-vecs into the right position
-            test_idx_range_full = range(
-                min(test_idx_reorder), max(test_idx_reorder)+1)
-            tx_extended = sp.lil_matrix((len(test_idx_range_full), x.shape[1]))
-            tx_extended[test_idx_range-min(test_idx_range), :] = tx
-            tx = tx_extended
-            ty_extended = np.zeros((len(test_idx_range_full), y.shape[1]))
-            ty_extended[test_idx_range-min(test_idx_range), :] = ty
-            ty = ty_extended
-
-        features = sp.vstack((allx, tx)).tolil()
-        features[test_idx_reorder, :] = features[test_idx_range, :]
-        adj = nx.adjacency_matrix(nx.from_dict_of_lists(graph))
-
-        labels = np.vstack((ally, ty))
-        labels[test_idx_reorder, :] = labels[test_idx_range, :]
-
-        splits_file_path = '/home/zhangtaiyan/workspace/SADE-GCN/small-scale/splits/' + dataset_str + \
-            '_split_0.6_0.2_' + str(split) + '.npz'
-
-        with np.load(splits_file_path) as splits_file:
-            train_mask = splits_file['train_mask']
-            val_mask = splits_file['val_mask']
-            test_mask = splits_file['test_mask']
-
-        idx_train = list(np.where(train_mask == 1)[0])
-        idx_val = list(np.where(val_mask == 1)[0])
-        idx_test = list(np.where(test_mask == 1)[0])
-
-        no_label_nodes = []
-        if dataset_str == 'citeseer':  # citeseer has some data with no label
-            for i in range(len(labels)):
-                if sum(labels[i]) < 1:
-                    labels[i][0] = 1
-                    no_label_nodes.append(i)
-
-            for n in no_label_nodes:  # remove unlabel nodes from train/val/test
-                if n in idx_train:
-                    idx_train.remove(n)
-                if n in idx_val:
-                    idx_val.remove(n)
-                if n in idx_test:
-                    idx_test.remove(n)
-
+        pass
     elif dataset_str in ['chameleon', 'cornell', 'film', 'squirrel', 'texas', 'wisconsin']:
         graph_adjacency_list_file_path = os.path.join(
             'new_data', dataset_str, 'out1_graph_edges.txt')
