@@ -416,21 +416,6 @@ class PCNet(nn.Module):
             A_r_list = torch.load(f"save_embd/{self.data_name}_ours_{self.tebd_dim}_3_A_r_list.pt")[:self.adj_order]
             self.A1 = torch.cat(A_r_list, dim=-1).to(data.graph['node_feat'].device)
             
-        # if self.A1== None:
-        #     combine_list = []
-        #     try:
-        #         A_r_list = torch.load(f"save_embd/{self.data_name}_ours_{self.tebd_dim}_3_A_r_list.pt")[:self.adj_order]
-        #         A_r_pos_list = torch.load(f"save_embd/{self.data_name}_ours_{self.tebd_dim}_3_A_r_list_pos.pt")[:self.adj_order]
-        #     except:
-        #         pass
-        #     for i in range(self.adj_order):
-        #         value1 = A_r_list[i].coalesce().values()
-        #         value2 = A_r_pos_list[i].coalesce().values()
-        #         alpha = torch.mean(value1) / torch.mean(value2)
-        #         combine = SparseTensor(row=A_r_list[i].coalesce().indices()[0], col=A_r_list[i].coalesce().indices()[1], value=value1+alpha*value2, sparse_sizes=(A_r_list[i].shape[0], A_r_list[i].shape[1])).to_torch_sparse_coo_tensor()
-        #         combine_list.append(combine)
-        #     self.A1 = torch.cat(combine_list,dim=-1).to(data.graph['node_feat'].device)
-        # self.A1 = F.dropout(self.A1, p=self.input_dropout, training=self.training)
         logits = self.W(self.A1)
         logits = F.dropout(logits, p=self.dropout, training=self.training)
         # logits = F.elu(logits)
