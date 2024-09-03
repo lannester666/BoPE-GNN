@@ -1,4 +1,4 @@
-This repository contains the code implementation of the paper "improved topology features for node classification on heterophilic graphs". To reproduce the results in the paper, you need to follow these steps:
+This repository contains the code implementation of the paper "Improved topology features for node classification on heterophilic graphs[https://rdcu.be/dSQVR]". To reproduce the results in the paper, you need to follow these steps:
 
 1. Download the datasets from https://github.com/CUAI/Non-Homophily-Large-Scale.git and https://github.com/RecklessRonan/GloGNN.git
 2. Use 
